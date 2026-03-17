@@ -1,30 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Panel Corresponsal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            margin: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .caja {
+            font-size: 30px;
+            text-align: center;
+            color: #22c55e;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            border: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .ingreso { background: #22c55e; }
+        .egreso { background: #ef4444; }
+        .cuadre { background: #3b82f6; }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #334155;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Caja: ${{ caja }}</h2>
+<div class="container">
 
-<form method="POST">
-    <input type="number" name="monto" placeholder="Monto">
-    <select name="tipo">
-        <option value="ingreso">Ingreso</option>
-        <option value="egreso">Egreso</option>
-    </select>
-    <button type="submit">Guardar</button>
-</form>
+    <h1>💳 Corresponsal</h1>
 
-<h3>Movimientos</h3>
+    <div class="card">
+        <div class="caja">
+            ${{ caja }}
+        </div>
+    </div>
 
-<ul>
-{% for m in movimientos %}
-    <li>{{ m.tipo }} - ${{ m.monto }} - {{ m.fecha }}</li>
-{% endfor %}
-</ul>
+    <div class="card">
+        <h3>Movimiento</h3>
 
-<a href="/reporte">Ver reporte</a>
+        <form method="POST" action="/movimiento">
+            <input type="number" name="monto" placeholder="Monto" required>
+            <input type="text" name="tipo" placeholder="Tipo (ej: retiro, pago)" required>
+
+            <button class="ingreso" name="accion" value="ingreso">Ingreso</button>
+            <button class="egreso" name="accion" value="egreso">Egreso</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Cuadre</h3>
+        <form method="POST" action="/cuadre">
+            <input type="number" name="real" placeholder="Dinero real en caja" required>
+            <button class="cuadre">Calcular</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Historial</h3>
+
+        <table>
+            <tr>
+                <th>Tipo</th>
+                <th>Detalle</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+            </tr>
+
+            {% for m in movimientos %}
+            <tr>
+                <td>{{ m.tipo }}</td>
+                <td>{{ m.subtipo }}</td>
+                <td>${{ m.monto }}</td>
+                <td>{{ m.fecha }}</td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+
+</div>
 
 </body>
 </html>
