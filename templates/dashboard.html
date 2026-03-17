@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Caja: ${{ caja }}</h2>
+
+<form method="POST">
+    <input type="number" name="monto" placeholder="Monto">
+    <select name="tipo">
+        <option value="ingreso">Ingreso</option>
+        <option value="egreso">Egreso</option>
+    </select>
+    <button type="submit">Guardar</button>
+</form>
+
+<h3>Movimientos</h3>
+
+<ul>
+{% for m in movimientos %}
+    <li>{{ m.tipo }} - ${{ m.monto }} - {{ m.fecha }}</li>
+{% endfor %}
+</ul>
+
+<a href="/reporte">Ver reporte</a>
+
+</body>
+</html>

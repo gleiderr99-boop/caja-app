@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte</title>
+</head>
+<body>
+
+<h2>Reporte de movimientos</h2>
+
+<ul>
+{% for m in movimientos %}
+    <li>{{ m.tipo }} - ${{ m.monto }} - {{ m.fecha }}</li>
+{% endfor %}
+</ul>
+
+<a href="/dashboard">Volver</a>
+
+</body>
+</html>
