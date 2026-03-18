@@ -1,62 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ControlFiado</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style>
-        body { background: #0f172a; color: white; font-family: Arial; }
-        .container { padding: 15px; }
-        .card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 10px;
-            border: none;
-        }
-
-        button { background: #22c55e; color: white; }
-
-        table { width: 100%; margin-top: 10px; }
-    </style>
+<meta name="viewport" content="width=device-width">
+<style>
+body{background:#0f172a;color:white;font-family:Arial;}
+.card{background:#1e293b;margin:10px;padding:15px;border-radius:10px;}
+input,button{width:100%;padding:10px;margin:5px 0;border-radius:10px;border:none;}
+button{background:#22c55e;color:white;}
+a{color:#38bdf8;}
+</style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="card">
+<h2>Total: ${{ total }}</h2>
+<a href="/inventario">Inventario</a> |
+<a href="/clientes">Clientes</a>
+</div>
 
-    <div class="card">
-        <h3>Total Ventas: ${{ total_ventas }}</h3>
-        <h3>Total Deudas: ${{ total_deudas }}</h3>
-    </div>
+<div class="card">
+<h3>Registrar Venta</h3>
+<form method="POST" action="/venta">
+<input name="producto" placeholder="Producto">
+<input name="cantidad" type="number" placeholder="Cantidad">
+<input name="precio" type="number" placeholder="Precio">
+<button>Guardar</button>
+</form>
+</div>
 
-    <div class="card">
-        <h3>Registrar Venta</h3>
-        <form method="POST" action="/venta">
-            <input type="number" name="monto" placeholder="Monto">
-            <input type="text" name="cliente" placeholder="Cliente (opcional)">
-            <button>Guardar</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>Registrar Abono</h3>
-        <form method="POST" action="/abono">
-            <input type="text" name="cliente" placeholder="Cliente">
-            <input type="number" name="monto" placeholder="Monto">
-            <button>Abonar</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>Deudas</h3>
-        {% for c, v in deudas.items() %}
-            <p>{{ c }}: ${{ v }}</p>
-        {% endfor %}
-    </div>
-
+<div class="card">
+<h3>Ventas</h3>
+{% for v in ventas %}
+<p>{{v.producto}} - {{v.total}} ({{v.fecha}})</p>
+{% endfor %}
 </div>
 
 </body>
