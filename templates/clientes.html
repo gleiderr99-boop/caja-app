@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;color:white;font-family:Arial;">
+<div style="padding:15px;">
+<h2>Clientes</h2>
+
+<form method="POST">
+<input name="nombre" placeholder="Nombre">
+<button>Agregar</button>
+</form>
+
+{% for c in clientes %}
+<p>{{c}}</p>
+{% endfor %}
+
+<a href="/dashboard">Volver</a>
+</div>
+</body>
+</html>

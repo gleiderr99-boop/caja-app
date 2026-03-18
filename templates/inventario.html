@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#0f172a;color:white;font-family:Arial;">
+<div style="padding:15px;">
+<h2>Inventario</h2>
+
+<form method="POST">
+<input name="nombre" placeholder="Producto">
+<input name="precio" type="number" placeholder="Precio">
+<button>Agregar</button>
+</form>
+
+{% for p in productos %}
+<p>{{p.nombre}} - ${{p.precio}}</p>
+{% endfor %}
+
+<a href="/dashboard">Volver</a>
+</div>
+</body>
+</html>
