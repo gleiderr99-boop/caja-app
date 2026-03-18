@@ -79,8 +79,16 @@ def venta():
 def abono():
     data = cargar()
 
-    cliente = request.form["cliente"]
-    monto = float(request.form["monto"])
+    cliente = request.form.get("cliente", "").strip()
+    monto = request.form.get("monto", "")
+
+    if not cliente or not monto:
+        return redirect("/dashboard")
+
+    try:
+        monto = float(monto)
+    except:
+        return redirect("/dashboard")
 
     if cliente in data["deudas"]:
         data["deudas"][cliente] -= monto
