@@ -1,40 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Panel Corresponsal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ControlFiado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
-        body {
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            margin: 0;
-        }
+        body { background: #0f172a; color: white; font-family: Arial; }
+        .container { padding: 15px; }
+        .card { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
 
-        .container {
-            padding: 20px;
-        }
-
-        .card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .caja {
-            font-size: 30px;
-            text-align: center;
-            color: #22c55e;
-        }
-
-        input {
+        input, button {
             width: 100%;
             padding: 10px;
             margin: 5px 0;
@@ -42,89 +17,44 @@
             border: none;
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 5px;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        button { background: #22c55e; color: white; }
 
-        .ingreso { background: #22c55e; }
-        .egreso { background: #ef4444; }
-        .cuadre { background: #3b82f6; }
-
-        table {
-            width: 100%;
-            margin-top: 10px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: center;
-        }
-
-        th {
-            background: #334155;
-        }
+        table { width: 100%; margin-top: 10px; }
     </style>
 </head>
+
 <body>
 
 <div class="container">
 
-    <h1>💳 Corresponsal</h1>
-
     <div class="card">
-        <div class="caja">
-            ${{ caja }}
-        </div>
+        <h3>Total Ventas: ${{ total_ventas }}</h3>
+        <h3>Total Deudas: ${{ total_deudas }}</h3>
     </div>
 
     <div class="card">
-        <h3>Movimiento</h3>
-
-        <form method="POST" action="/movimiento">
-            <input type="number" name="monto" placeholder="Monto" required>
-            <input type="text" name="tipo" placeholder="Tipo (ej: retiro, pago)" required>
-
-            <button class="ingreso" name="accion" value="ingreso">Ingreso</button>
-            <button class="egreso" name="accion" value="egreso">Egreso</button>
+        <h3>Registrar Venta</h3>
+        <form method="POST" action="/venta">
+            <input type="number" name="monto" placeholder="Monto">
+            <input type="text" name="cliente" placeholder="Cliente (opcional)">
+            <button>Guardar</button>
         </form>
     </div>
 
     <div class="card">
-        <h3>Cuadre</h3>
-        <form method="POST" action="/cuadre">
-            <input type="number" name="real" placeholder="Dinero real en caja" required>
-            <button class="cuadre">Calcular</button>
+        <h3>Registrar Abono</h3>
+        <form method="POST" action="/abono">
+            <input type="text" name="cliente" placeholder="Cliente">
+            <input type="number" name="monto" placeholder="Monto">
+            <button>Abonar</button>
         </form>
     </div>
 
     <div class="card">
-        <h3>Historial</h3>
-
-        <table>
-            <tr>
-                <th>Tipo</th>
-                <th>Detalle</th>
-                <th>Monto</th>
-                <th>Fecha</th>
-            </tr>
-
-            {% for m in movimientos %}
-            <tr>
-                <td>{{ m.tipo }}</td>
-                <td>{{ m.subtipo }}</td>
-                <td>${{ m.monto }}</td>
-                <td>{{ m.fecha }}</td>
-            </tr>
-            {% endfor %}
-
-        </table>
+        <h3>Deudas</h3>
+        {% for c, v in deudas.items() %}
+            <p>{{ c }}: ${{ v }}</p>
+        {% endfor %}
     </div>
 
 </div>
