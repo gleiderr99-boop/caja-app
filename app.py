@@ -3,100 +3,94 @@ import json
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "clave_secreta"
+app.secret_key = "negocio_pro"
 
-ARCHIVO = "data.json"
+DB = "db.json"
 
-def cargar():
+def load_db():
     try:
-        with open(ARCHIVO, "r") as f:
+        with open(DB) as f:
             return json.load(f)
     except:
-        return {"ventas": [], "deudas": {}}
+        return {"ventas": [], "productos": [], "clientes": []}
 
-def guardar(data):
-    with open(ARCHIVO, "w") as f:
+def save_db(data):
+    with open(DB, "w") as f:
         json.dump(data, f, indent=4)
 
 # -------- LOGIN --------
-
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = request.form["user"]
-        password = request.form["password"]
-
-        if user == "admin" and password == "1234":
-            session["user"] = user
+        if request.form["user"] == "admin" and request.form["password"] == "1234":
+            session["user"] = "admin"
             return redirect("/dashboard")
-
     return render_template("login.html")
 
 # -------- DASHBOARD --------
-
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
+    
+    db = load_db()
+    total = sum(v["total"] for v in db["ventas"])
+    
+    return render_template("dashboard.html", total=total, ventas=db["ventas"])
 
-    data = cargar()
+# -------- INVENTARIO --------
+@app.route("/inventario", methods=["GET","POST"])
+def inventario():
+    if "user" not in session:
+        return redirect("/")
+    
+    db = load_db()
+    
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        precio = float(request.form["precio"])
+        
+        db["productos"].append({"nombre": nombre, "precio": precio})
+        save_db(db)
+        return redirect("/inventario")
+    
+    return render_template("inventario.html", productos=db["productos"])
 
-    total_ventas = sum(v["monto"] for v in data["ventas"])
-    total_deudas = sum(data["deudas"].values())
+# -------- CLIENTES --------
+@app.route("/clientes", methods=["GET","POST"])
+def clientes():
+    if "user" not in session:
+        return redirect("/")
+    
+    db = load_db()
+    
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        db["clientes"].append(nombre)
+        save_db(db)
+        return redirect("/clientes")
+    
+    return render_template("clientes.html", clientes=db["clientes"])
 
-    return render_template("dashboard.html",
-                           ventas=data["ventas"],
-                           deudas=data["deudas"],
-                           total_ventas=total_ventas,
-                           total_deudas=total_deudas)
-
-# -------- REGISTRAR VENTA --------
-
+# -------- VENTAS --------
 @app.route("/venta", methods=["POST"])
 def venta():
-    data = cargar()
-
-    monto = float(request.form["monto"])
-    cliente = request.form.get("cliente")
-
-    venta = {
-        "monto": monto,
-        "cliente": cliente,
-        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M")
-    }
-
-    data["ventas"].append(venta)
-
-    if cliente:
-        data["deudas"][cliente] = data["deudas"].get(cliente, 0) + monto
-
-    guardar(data)
+    db = load_db()
+    
+    producto = request.form["producto"]
+    cantidad = int(request.form["cantidad"])
+    precio = float(request.form["precio"])
+    
+    total = cantidad * precio
+    
+    db["ventas"].append({
+        "producto": producto,
+        "cantidad": cantidad,
+        "total": total,
+        "fecha": datetime.now().strftime("%Y-%m-%d")
+    })
+    
+    save_db(db)
     return redirect("/dashboard")
 
-# -------- ABONO --------
-
-@app.route("/abono", methods=["POST"])
-def abono():
-    data = cargar()
-
-    cliente = request.form.get("cliente", "").strip()
-    monto = request.form.get("monto", "")
-
-    if not cliente or not monto:
-        return redirect("/dashboard")
-
-    try:
-        monto = float(monto)
-    except:
-        return redirect("/dashboard")
-
-    if cliente in data["deudas"]:
-        data["deudas"][cliente] -= monto
-
-        if data["deudas"][cliente] <= 0:
-            del data["deudas"][cliente]
-
-    guardar(data)
-    return redirect("/dashboard")
-
-app.run(host="0.0.0.0", port=10000)
+app.run(host="0.0.0.0", port=10000)0000)
